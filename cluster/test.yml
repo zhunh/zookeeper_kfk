@@ -1,0 +1,43 @@
+version: "3"
+
+services: 
+  zookeeper01:
+    image: zookeeper
+    container_name: zookeeper01
+    restart: always
+    ports:
+      - 2281:2181
+    volumes:
+      - ./config/zk01/myid:/data/myid
+      - ./config/zk01/zoo.cfg:/conf/zoo.cfg
+    networks: 
+      - zk_cluster
+
+  zookeeper02:
+    image: zookeeper
+    container_name: zookeeper02
+    restart: always
+    ports:
+      - 2282:2181
+    volumes:
+      - ./config/zk02/myid:/data/myid
+      - ./config/zk02/zoo.cfg:/conf/zoo.cfg
+    networks: 
+      - zk_cluster
+
+  zookeeper03:
+    image: zookeeper
+    container_name: zookeeper03
+    restart: always
+    ports:
+      - 2283:2181
+    volumes:
+      - ./config/zk03/myid:/data/myid
+      - ./config/zk03/zoo.cfg:/conf/zoo.cfg
+    networks: 
+      - zk_cluster      
+
+networks: 
+  zk_cluster:
+    driver: bridge
+

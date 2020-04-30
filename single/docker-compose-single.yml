@@ -1,0 +1,32 @@
+version: "3"
+
+services: 
+  zk_single:
+    image: zookeeper
+    container_name: zk_single
+    ports:
+     - "2181:2181"
+
+  kfk_single:
+    image: wurstmeister/kafka
+    container_name: kfk_single
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zk_single:2181    
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+    ports:
+      - "9092:9092"
+    links:
+      - zk_single
+
+  kafka-manager:
+    image: kafkamanager/kafka-manager
+    container_name: kafka-manager
+    environment:
+      ZK_HOSTS: zk_single:2181
+    ports:
+      - "9000:9000"
+    links:
+      - zk_single
+      - kfk_single
+

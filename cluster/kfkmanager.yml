@@ -1,0 +1,24 @@
+version: '3'
+services:
+  kafka-manager:
+    image: kafkamanager/kafka-manager     
+    environment:
+      ZK_HOSTS: zoo1:2181,zoo2:2181,zoo3:2181
+      KAFKA_BROKERS: kafka1:9092,kafka2:9093,kafka3:9094
+      APPLICATION_SECRET: "letmein"
+    ports:
+      - "9001:9000"
+    external_links:
+      - zoo1
+      - zoo2
+      - zoo3
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      default:
+        
+networks:
+  default:
+    external:   # 使用已创建的网络
+      name: cluster_zk_cluster

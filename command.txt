@@ -1,0 +1,27 @@
+docker exec -it zk1 bash
+docker exec -it zk2 bash
+docker exec -it zk3 bash
+
+./bin/zkCli.sh -timeout 5000 -r -server zk1:2181
+./bin/zkCli.sh -timeout 5000 -r -server zk2:2181
+
+./bin/zkServer.sh status
+
+docker-compose up -d
+docker-compose -f docker-compose-kafka.yml up -d
+docker-compose -f docker-compose-kfkmanager.yml up -d
+
+docker kill $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker-compose down
+
+docker logs -tf 
+
+docker run -d -p 9001:9000 -eZK_HOSTS=zoo1:2181 --link zookeeper:zoo1 kafkamanager/kafka-manager
+
+#创建topic
+kafka-topics.sh --zookeeper zoo1:2181  --create --replication-factor 3 --partitions 1 --topic firsttopic
+
+#发送消息
+kafka-console-producer.sh --broker-list kafka1:9092 --topic firsttopic
+kafka-console-consumer.sh --bootstrap-server kafka1:9092 --from-beginning --topic firsttopic
